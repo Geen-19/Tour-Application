@@ -173,6 +173,7 @@ exports.createTour = async (req, res) => {
             }
         });
     }catch (err){
+        console.log(err)
         res.status(400).json({
             status: "fail",
             message: err
