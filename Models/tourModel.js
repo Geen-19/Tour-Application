@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+//const User = require('./userModel.js');
 const tourSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -10,7 +11,8 @@ const tourSchema = new mongoose.Schema({
         minlength: [10, 'A tour must have more or equal ro 10 characters']
     },
     duration: {
-        type: Number
+        type: Number,
+        required: [true, 'A tour must have a duration'],
     },
     maxGroupSize: {
         type: Number,
@@ -70,7 +72,41 @@ const tourSchema = new mongoose.Schema({
         default: Date.now(),
         select: false
     },
-    startDates: [Date]
+    startDates: [Date],
+    startLocation: {
+        //GeoJSON
+        type: {
+            type: String,
+            default: 'Point',
+            enum: ['Point']
+        },
+        coordinates:[Number],
+        address: String,
+        description: String
+    },
+    locations:[{
+        type: {
+            type: String,
+            default:'Point',
+            enum: ['Point']
+        },
+        coordinates:[Number],
+        address: String,
+        description: String,
+        day: Number
+    }
+],
+guides: [
+    {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
+    }
+],
+
+},
+{
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 });
 
 tourSchema.virtual('durationWeeks').get(function() {
