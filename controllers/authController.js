@@ -11,24 +11,30 @@ const signToken = id => {
         expiresIn: '90d'
     });
 }
-const cookieOptions =  {
-    expires: new Date(Date.now() + 90*24*60*60*1000),
-    //secure: true
-    httpOnly: true
-}
+
 const createSendToken = (user, statusCode, res) => {
     const token = signToken(user._id);
-
+    const cookieOptions = {
+      expires: new Date(
+        Date.now() + 90 * 24 * 60 * 60 * 1000
+      ),
+      httpOnly: true,
+      secure: true
+    };
+  
     res.cookie('jwt', token, cookieOptions);
-    user.password = undefined
+  
+    // Remove password from output
+    user.password = undefined;
+  
     res.status(statusCode).json({
-        status: 'success',
-        token, 
-        data: {
-            user
-        }
+      status: 'success',
+      token,
+      data: {
+        user
+      }
     });
-}
+  };
 exports.signup = catchAsync(async (req, res , next) => {    
     const newUser = await User.create({
         name: req.body.name,
@@ -62,6 +68,8 @@ exports.protect = catchAsync(async(req,res,next) => {
     // 1) Get token and check if its there
     if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
          token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies.jwt) {
+        token = req.cookies.jwt;
     }
     if(!token) {
         return next(new AppError('You are not logged in! Please log in to get access', 401));
@@ -168,3 +176,31 @@ exports.updatePassword = catchAsync ( async(req, res, next) => {
     // 4) log in and send jwt
     createSendToken(user, 200, res)
 });
+// Only for rendered pages
+exports.isLoggedIn = catchAsync(async(req,res,next) => {
+    // 1) Get token and check if its there
+    if (req.cookies.jwt) {
+    
+   
+    const decoded =  await promisify(jwt.verify)(
+        req.cookies.jwt,
+         'this-is-my-name-geen-donald-joel-long-JWT_SECRET');
+    // 3) Check if user still exists
+    const freshUser = await User.findById(decoded.id);
+    if(!freshUser) {
+        return next();
+
+    }
+    // 4) Check if user changed password after the jwt was issued
+    if(freshUser.changedPasswordAfter(decoded.iat)) {
+        return next()
+    }
+   
+    //THERE IS A LOGGED IN USER
+    res.locals.user = freshUser
+    next();
+}else{
+    next()
+}
+
+})
