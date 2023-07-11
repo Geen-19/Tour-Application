@@ -1,6 +1,9 @@
 extends base 
 block append head
-    script(src= '/js/mapbox.js')
+    //- script(src= '/js/mapbox.js')
+    link(rel='stylesheet' href='https://unpkg.com/leaflet@1.6.0/dist/leaflet.css')
+    script(src='https://unpkg.com/leaflet@1.6.0/dist/leaflet.js')
+    script(src='/js/Leaflet.js' defer)
 block content   
         section.section-header
             .header__hero
@@ -69,7 +72,7 @@ block content
                     class = `picture-box__img--${i+1}`)
 
         section.section-map
-            #map
+            #map(data-locations= `${JSON.stringify(tour.locations)}`)
 
         section.section-reviews
             .reviews
