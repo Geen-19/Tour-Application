@@ -4,7 +4,7 @@ const path = require('path')
 const tourRouter = require('./routes/tourRouter');
 const userRouter = require('./routes/userRouter');
 const reviewRouter = require('./routes/reviewRouter');
-
+const cors = require('cors')
 const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean')
 const AppError = require('./utils/AppError.js')
@@ -13,7 +13,23 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet')
 const viewRouter = require('./routes/viewRouter'); 
 const app = express();
-
+app.use(
+    cors({
+      origin: 'http://localhost:3000',
+      credentials: true,
+    })
+);
+app.use(
+    helmet.contentSecurityPolicy({
+      directives: {
+        defaultSrc: ["'self'", 'https:', 'http:', 'data:', 'ws:'],
+        baseUri: ["'self'"],
+        fontSrc: ["'self'", 'https:', 'http:', 'data:'],
+        scriptSrc: ["'self'", 'https:', 'http:', 'blob:'],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https:', 'http:'],
+      },
+    })
+);
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -52,6 +68,7 @@ app.use((req, res, next) => {
 
 // ROUTES       
 app.use('/', viewRouter); 
+app.use('/login',viewRouter)
 app.use('/api/v1/tours', tourRouter); 
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);

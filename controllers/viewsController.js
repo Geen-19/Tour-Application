@@ -31,8 +31,14 @@ exports.getTour = catchAsync(async (req,res) => {
     });
 });
 exports.login = catchAsync(async (req, res) => {
-
-    res.status(200).render('login');
+    res.status(200)
+    .set(
+        'Content-Security-Policy',
+        "script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js 'unsafe-inline' 'unsafe-eval';"
+    )
+    .render('login', {
+    title: 'Log into your account'
+});
 });
 
 // /login 
