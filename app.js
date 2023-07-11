@@ -12,6 +12,7 @@ const qlobalErrorHandler = require('./controllers/errorController.js');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet')
 const viewRouter = require('./routes/viewRouter'); 
+const cookieParser = require('cookie-parser');
 const app = express();
 app.use(
     cors({
@@ -47,6 +48,7 @@ app.use('/api',limiter);
 app.use(express.json({
     limit: '10kb'
 }));
+app.use(cookieParser());
 
 // data sanitization against noSQL query injection
 app.use(mongoSanitize());
