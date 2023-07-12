@@ -1,7 +1,7 @@
 
 
 
-const login =  async (email, password) => {
+export const login =  async (email, password) => {
     console.log(email,password)
     try{
         
@@ -25,9 +25,3 @@ const login =  async (email, password) => {
     }
     
 }
-document.querySelector('.btn').addEventListener('click', e => {
-    console.log('Hello From Login')
-    var email = document.getElementById('email').value;
-    var password = document.getElementById('password').value;
-    login(email,password)
-})

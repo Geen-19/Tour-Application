@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "targets": {
+    "main": false
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon server.js",
     "start:prod": " SET NODE_ENV=production && nodemon server.js",
     "debug": "ndb server.js",
-    "watch:js": "parcel watch ./public"
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "build": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled"
   },
   "author": "",
   "license": "ISC",
@@ -30,5 +34,8 @@
     "pug": "^3.0.2",
     "validator": "^13.9.0",
     "xss-clean": "^0.1.4"
+  },
+  "devDependencies": {
+    "parcel": "^2.9.3"
   }
 }
